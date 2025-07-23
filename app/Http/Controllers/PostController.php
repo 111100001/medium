@@ -8,15 +8,15 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $categories = Category::get();
         $posts = Post::orderBy('created_at', 'DESC')->paginate(10);
 
-        return view('dashboard', compact('categories', 'posts'));
+        return view('post.index', compact('posts'));
     }
 
     /**
