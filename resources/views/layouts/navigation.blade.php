@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center h-16">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo  />
+                        <x-application-logo />
                     </a>
                 </div>
 
@@ -20,6 +20,7 @@
                 </a>
 
                 <!-- Settings Dropdown -->
+                @auth
                 <div class="hidden sm:flex sm:items-center sm:ms-6">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -55,6 +56,19 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+                @endauth
+
+                @guest
+
+                <div class="flex items-center ml-5">
+                    <a href="{{ route('register') }}">
+                        <x-primary-button class="bg-emerald-500 hover:bg-emerald-600 text-white">Create an account</x-primary-button>
+                    </a>
+                    <a href="{{ route('login') }}" class="ms-4">
+                        <x-primary-button class="!bg-white !hover:bg-white !hover:text-black !text-gray-500">Login</x-primary-button>
+                    </a>
+                </div>
+                @endguest
 
                 <!-- Hamburger -->
                 <div class="-me-2 flex items-center sm:hidden">
@@ -74,6 +88,7 @@
         </div>
     </div>
 
+    @auth
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
 
@@ -100,5 +115,7 @@
                 </form>
             </div>
         </div>
+
     </div>
+    @endauth
 </nav>

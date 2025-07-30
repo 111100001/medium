@@ -1,5 +1,5 @@
 import './bootstrap';
-
+import confetti from 'canvas-confetti';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
@@ -7,10 +7,9 @@ window.Alpine = Alpine;
 Alpine.start();
 
 
-    import confetti from 'canvas-confetti';
 document.addEventListener('DOMContentLoaded', () => {
-    const clapBtn = document.getElementById('ClapButton');
-    if (clapBtn) {
+    const clapBtns = document.querySelectorAll('#ClapButton'); // Select all buttons with ID 'ClapButton'
+    clapBtns.forEach(clapBtn => {
         clapBtn.addEventListener('click', function () {
             // Get button position
             const rect = clapBtn.getBoundingClientRect();
@@ -27,5 +26,5 @@ document.addEventListener('DOMContentLoaded', () => {
             
             });
         });
-    }
+    });
 });

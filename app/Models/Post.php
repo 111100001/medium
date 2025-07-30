@@ -50,10 +50,16 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function readtime()
     {
         $wordCount = str_word_count(strip_tags($this->content));
         $readTime = ceil($wordCount / 200); // Assuming average reading speed of 200 words per minute
-        return max(1,$readTime) . ' min read';
+        return max(1, $readTime) . ' min read';
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

@@ -46,10 +46,7 @@ class PostController extends Controller
 
         $imagePath = $image->store('posts', 'public');
         $data['image'] = $imagePath;
-        
-
-
-        
+     
         Post::create($data);
 
         return redirect()->route('dashboard');
