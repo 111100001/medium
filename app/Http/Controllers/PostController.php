@@ -55,7 +55,7 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $username, Post $post)
+    public function show(string $username, Post $post) //the username is needed to resolve the route but in the ide it shows as unused
     {
         return view('post.show',[
             'post' => $post,            

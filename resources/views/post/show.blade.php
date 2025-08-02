@@ -8,18 +8,28 @@
 
                     {{-- USER PROFILE SECTION --}}
 
-                    <div class="flex items-center gap-2">
+                    <x-follow-container :user="$post->user" class="flex items-center gap-2">
                         <x-user-avatar :user="$post->user" />
-                        <a href="{{ route('public.profile.show', $post->user) }}" class="hover:underline ml-2 text-gray-700">{{ $post->user->name }}</a>
+                        <a href="{{ route('public.profile.show', $post->user) }}"
+                            class="hover:underline ml-2 text-gray-700">{{ $post->user->name }}</a>
                         &middot;
-                        <a href="#" class="text-emerald-500">Follow</a>
+
+                        @if ( auth()->user()->id !== $post->user->id)
+                        @auth
+
+                        <button @click="follow()" class="" x-text="following ? 'Unfollow' : 'Follow'"
+                            :class="following ? 'text-red-600' : 'text-emerald-600'"></button>
+
+                        @endauth
+                        @endif
+
 
                         <span class="text-gray-500 ml-2 ">
                             @if ($post->created_at->diffInDays() < 1) {{$post->created_at->diffForHumans() }} @else
                                 {{$post->created_at->format('M d, Y')}} @endif </span>
                                 <span class="text-2xl text-gray-500 self-start -mt-0.5">.</span>
                                 <div class=" flex gap-2 text-gray-500 "> {{ $post->readtime() }} </div>
-                    </div>
+                    </x-follow-container>
 
                     <x-clap-button />
 
@@ -35,10 +45,10 @@
 
                 <div class="mt-8 ">
                     <span class=" px-4 py-2 bg-gray-200 rounded-xl ">{{ $post->category->name }}</span>
-                   
+
                 </div>
 
-                 <x-clap-button class="mt-3 p-3 border-t border-b " />
+                <x-clap-button class="mt-3 p-3 border-t border-b " />
 
 
 

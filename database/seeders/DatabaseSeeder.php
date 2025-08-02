@@ -20,8 +20,14 @@ class DatabaseSeeder extends Seeder
             'username' => 'admin_user',
             'email' => 'admin@example.com'
         ]);
-        
-       $categories =[
+
+        User::factory()->create([
+            'name' => 'Test User',
+            'username' => 'test_user',
+            'email' => 'test@example.com'
+        ]);
+
+        $categories = [
             'Technology',
             'Health',
             'Lifestyle',
@@ -38,7 +44,9 @@ class DatabaseSeeder extends Seeder
             Category::create(['name' => $category]);
         }
 
-        //Post::factory(100)->create();
-;
+            //Post::factory(100)->create();
+
+
+        ;
     }
 }

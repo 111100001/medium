@@ -76,8 +76,27 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id')
+                    ->withPivot('followed_at'); // Do NOT call ->withTimestamps() because we disabled the default timestamps in the Follower model and replaced them with a custom 'followed_at' timestamp.
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id')
+                    ->withPivot('followed_at'); // Do NOT call ->withTimestamps() because we disabled the default timestamps in the Follower model and replaced them with a custom 'followed_at' timestamp. (idk why i did that but ok)
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class);
     }
+
+    public function isFollowedBy(User $user): bool
+    {
+        return $this->followers()->where('follower_id', $user->id)->exists();
+    }
+
+
 }

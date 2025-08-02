@@ -23,22 +23,29 @@
 
 
                     </div>
-                    <div class="w-[320px] border-l px-8">
+                    <x-follow-container :user="$user">
                         <x-user-avatar :user="$user" size="'w-32 h-32'" />
                         <h3 class=" pt-3  text-gray-700">{{ $user->name }}</h3>
-                        <p class="text-gray-500">26k followers</p>
+                        <p class="text-gray-500"><span x-text="followersCount"></span> followers</p>
                         <p class="text-gray-500">
                             {{ $user->bio ?? 'No bio available.' }}
                         </p>
 
+                        @if (auth()->user()->id !== $user->id)
+                        @auth
                         <div class="mt-4">
-                            <button class="bg-emerald-600 text-white px-4 py-2 rounded-full">Follow</button>
+                            <button @click="follow()" class=" text-white px-4 py-2 rounded-full"
+                                x-text="following ? 'Unfollow' : 'Follow'"
+                                :class="following ? 'bg-red-600' : 'bg-emerald-600'"></button>
                         </div>
+                        @endauth
+                        @endif
+                    </x-follow-container>
 
-                    </div>
                 </div>
             </div>
-
         </div>
+
+    </div>
     </div>
 </x-app-layout>
