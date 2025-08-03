@@ -31,7 +31,7 @@
                                 <div class=" flex gap-2 text-gray-500 "> {{ $post->readtime() }} </div>
                     </x-follow-container>
 
-                    <x-clap-button />
+                    <x-clap-button :post="$post" />
 
                 </div>
 
@@ -48,7 +48,7 @@
 
                 </div>
 
-                <x-clap-button class="mt-3 p-3 border-t border-b " />
+                <x-clap-button class="mt-3 p-3 border-t border-b " :post="$post" />
 
 
 
