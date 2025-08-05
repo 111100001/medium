@@ -17,12 +17,20 @@
         @csrf
         @method('patch')
 
-        @if($user->profile_image)
-        <div class="mb-4">
-            <img src="{{ Storage::url($user->profile_image) }}" alt="{{ $user->name }}'s Profile Image"
-                class="w-32 h-32 rounded-full object-cover">
-        </div>
-        @endif
+
+@if ($user->imageUrl())
+           <img src="{{ $user->imageUrl() }}" alt="{{ $user->name }}'s Profile Image"
+               class="w-32 h-32 rounded-full object-cover">
+@else
+           <div class="w-32 h-32 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
+               {{ strtoupper(substr($user->name, 0, 1)) }}
+           </div>
+    
+@endif
+
+            
+       
+       
 
         <div>
             <x-input-label for="profile_image" :value="__('Profile Image')" />

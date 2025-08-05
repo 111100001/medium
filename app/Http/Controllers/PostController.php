@@ -11,24 +11,51 @@ use App\Http\Requests\PostCreateRequest;
 
 class PostController extends Controller
 {
-    
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $posts = Post::orderBy('created_at', 'DESC')->paginate(10);
+        $user = auth()->user();
+        $query = Post::with(['user', 'media'])->withCount('claps')->latest();
 
+        // Check if we should show only followed users' posts
+        $showFollowing = request()->get('following') === 'true';
+
+        if ($user && $showFollowing) {
+            $ids = $user->following()->pluck('users.id');
+            $query->whereIn('user_id', $ids);
+        }
+
+        $posts = $query->paginate(10);
         return view('post.index', compact('posts'));
     }
 
+    public function following()
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return redirect()->route('dashboard');
+        }
+
+        $ids = $user->following()->pluck('users.id');
+        $posts = Post::with(['user', 'media'])
+            ->withCount('claps')
+            ->whereIn('user_id', $ids)
+            ->latest()
+            ->paginate(10);
+
+        return view('post.index', compact('posts'));
+    }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $categories = Category::get();
-        return view('post.create',['categories' => $categories]);
+        return view('post.create', ['categories' => $categories]);
     }
 
     /**
@@ -39,15 +66,18 @@ class PostController extends Controller
         $data = $request->validated();
         /**@var \Illuminate\Http\UploadedFile $image */
 
-        $image = $data['image'];
-        unset($data['image']);
+        // $image = $data['image'];
+        // unset($data['image']);
         $data['user_id'] = Auth::id();
         $data['slug'] = Str::slug($data['title']) . '-' . Str::random(6);
 
-        $imagePath = $image->store('posts', 'public');
-        $data['image'] = $imagePath;
-     
-        Post::create($data);
+        // $imagePath = $image->store('posts', 'public');
+        // $data['image'] = $imagePath;
+
+        $post = Post::create($data);
+
+        $post->addMediaFromRequest('image')
+            ->toMediaCollection();
 
         return redirect()->route('dashboard');
     }
@@ -57,9 +87,9 @@ class PostController extends Controller
      */
     public function show(string $username, Post $post) //the username is needed to resolve the route but in the ide it shows as unused
     {
-        return view('post.show',[
-            'post' => $post,            
-        ] );
+        return view('post.show', [
+            'post' => $post,
+        ]);
     }
 
     /**
@@ -84,5 +114,12 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         //
+    }
+
+    public function category(Category $category)
+    {
+
+        $posts = $category->posts()->with(['user', 'media'])->withCount('claps')->latest()->simplePaginate(5);
+        return view('post.index', compact('posts'));
     }
 }

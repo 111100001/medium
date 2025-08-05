@@ -8,6 +8,10 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 
 /**
  * @property int $id
@@ -34,10 +38,11 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -76,16 +81,25 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('profile_image')
+            ->width(128)
+            ->crop(128, 128);
+    }
+
+
     public function following()
     {
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id')
-                    ->withPivot('followed_at'); // Do NOT call ->withTimestamps() because we disabled the default timestamps in the Follower model and replaced them with a custom 'followed_at' timestamp.
+            ->withPivot('followed_at'); // Do NOT call ->withTimestamps() because we disabled the default timestamps in the Follower model and replaced them with a custom 'followed_at' timestamp.
     }
 
     public function followers()
     {
         return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id')
-                    ->withPivot('followed_at'); // Do NOT call ->withTimestamps() because we disabled the default timestamps in the Follower model and replaced them with a custom 'followed_at' timestamp. (idk why i did that but ok)
+            ->withPivot('followed_at'); // Do NOT call ->withTimestamps() because we disabled the default timestamps in the Follower model and replaced them with a custom 'followed_at' timestamp. (idk why i did that but ok)
     }
 
     public function posts()
@@ -98,5 +112,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->followers()->where('follower_id', $user->id)->exists();
     }
 
-
+    public function imageUrl()
+    {
+        $media = $this->getFirstMedia();
+        
+        if ($media && $media->hasGeneratedConversion('profile_image')) {
+            return $media->getUrl('profile_image');
+        }
+        
+        return $media?->getUrl();
+    }
 }

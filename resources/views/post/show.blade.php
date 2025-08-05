@@ -13,16 +13,17 @@
                         <a href="{{ route('public.profile.show', $post->user) }}"
                             class="hover:underline ml-2 text-gray-700">{{ $post->user->name }}</a>
                         &middot;
-
-                        @if ( auth()->user()->id !== $post->user->id)
+                        
                         @auth
+                        @if ( auth()->user()->id !== $post->user->id)
+
 
                         <button @click="follow()" class="" x-text="following ? 'Unfollow' : 'Follow'"
                             :class="following ? 'text-red-600' : 'text-emerald-600'"></button>
 
-                        @endauth
-                        @endif
 
+                        @endif
+                        @endauth
 
                         <span class="text-gray-500 ml-2 ">
                             @if ($post->created_at->diffInDays() < 1) {{$post->created_at->diffForHumans() }} @else
@@ -37,7 +38,7 @@
 
                 {{-- CONTENT SECTION --}}
                 <div class="mt-6">
-                    <img src="{{ Storage::url($post->image) }}" alt="{{ $post->title }}" class="w-full">
+                    <img src="{{ $post->imageUrl('large') }}" alt="{{ $post->title }}" class="w-full">
 
                     <div class="mt-4">{{ $post->content }}</div>
 

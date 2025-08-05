@@ -11,7 +11,6 @@ class ClapController extends Controller
     public function clap(Post $post)
     {
         $hasClapped = $post->claps()->where('user_id', auth()->id())->count();
-        $clapCount = $post->claps()->count();
 
         if ($hasClapped < 50) {
             $post->claps()->create([
@@ -23,7 +22,7 @@ class ClapController extends Controller
         return response()->json([
 
             'message' => 'Clap added successfully',
-            'Clapscount' => $post->claps()->count()
+            'Clapscount' => $post->claps()->count(),
         ]);
     }
 }

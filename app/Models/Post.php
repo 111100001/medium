@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Storage;
 
 /**
  * @property int $id
@@ -32,19 +37,31 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Post whereUserId($value)
  * @mixin \Eloquent
  */
-class Post extends Model
+class Post extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'title',
         'slug',
         'content',
-        'image',
+        //'image',
         'category_id',
         'user_id',
         'published_at'
     ];
+
+    public function registerMediaConversions(?Media $media = null): void 
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->width(400);
+
+            $this
+            ->addMediaConversion('large')
+            ->width(1000);
+    }
 
     public function user()
     {
@@ -66,5 +83,15 @@ class Post extends Model
     public function claps()
     {
         return $this->hasMany(Clap::class);
+    }
+
+    public function imageUrl($conversionName = ''){
+         $media = $this->getFirstMedia();
+        
+        if ($media && $media->hasGeneratedConversion('profile_image')) {
+            return $media->getUrl('profile_image');
+        }
+        
+        return $media?->getUrl();
     }
 }
