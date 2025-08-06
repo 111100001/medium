@@ -88,8 +88,8 @@ class Post extends Model implements HasMedia
     public function imageUrl($conversionName = ''){
          $media = $this->getFirstMedia();
         
-        if ($media && $media->hasGeneratedConversion('profile_image')) {
-            return $media->getUrl('profile_image');
+        if ($media && $media->hasGeneratedConversion('large')) {
+            return $media->getUrl('large');
         }
         
         return $media?->getUrl();

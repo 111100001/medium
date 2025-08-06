@@ -5,8 +5,7 @@
              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                  {{ $post->title }} </h5>
          </a>
-         <div class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest
-             {{ Str::words($post->content, 20) }}
+         <div class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ Str::words($post->content, 20) }}
          </div>
          <a class= "flex gap-4 text-gray-400 text-sm "href="{{ route('post.show', ['username' => $post->user->username, 'post' => $post]) }}">
            {{ $post->created_at->format('F j, Y') }}

@@ -20,7 +20,7 @@ Route::get('/', [PostController::class, 'index'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
@@ -29,12 +29,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/post/create', [PostController::class, 'store'])->name('post.store');
 
-        Route::get('/my-posts', [PostController::class, 'myPosts'])->name('myPosts');
+    Route::delete('/post/{post}', [PostController::class, 'destroy'])->name('post.destroy');
 
+    Route::get('/post/{post:slug}', [PostController::class, 'edit'])->name('post.edit');
+    Route::put('/post/{post}', [PostController::class, 'update'])->name('post.update');
+
+    Route::get('/my-posts', [PostController::class, 'myPosts'])->name('myPosts');
 });
 
 Route::middleware(['auth'])->group(function () {
-   
+
     Route::post('/follow/{user}', [FollowerController::class, 'FollowUnfollow'])->name('follow');
     Route::post('/clap/{post}', [ClapController::class, 'clap'])->name('clap');
 });

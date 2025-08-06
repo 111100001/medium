@@ -95,17 +95,48 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit( Post $post)
     {
-        //
+     
+       
+        $categories = Category::get();
+        return view('post.edit', [
+            'post' => $post,
+            'categories' => $categories,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(PostCreateRequest $request, Post $post)
     {
-        //
+      
+        $data = $request->validated();
+
+        $post->update($data);
+
+        if ($data['image'] ?? false) {
+            // Remove old media if exists
+            if ($post->getFirstMedia()) {
+                $post->getFirstMedia()->delete();
+            }
+            $post->addMediaFromRequest('image')
+                ->toMediaCollection();
+        }
+
+        return redirect()->route('myPosts');
+        // $data = $request->validated();
+        // $post->update($data);
+
+        // if($data['image'] ?? false)
+        // {
+        //     $post->addMediaFromRequest('image')
+        //         ->toMediaCollection();
+        // }
+
+        // return redirect()->route('dashboard');
+
     }
 
     /**
@@ -113,7 +144,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return redirect()->route('dashboard')->with('success', 'Post deleted successfully.');
     }
 
     public function category(Category $category)
